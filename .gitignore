@@ -3,3 +3,5 @@ Cargo.lock
 /.idea
 /.envrc
 /.direnv
+**/__pycache__
+**/*.so
