@@ -16,17 +16,17 @@ struct SearchPoint {
     state: usize,
     /// The cumulative probability of the labelling so far for paths without any leading blank
     /// labels.
-    label_prob: f64,
+    label_prob: f32,
     /// The cumulative probability of the labelling so far for paths with one or more leading
     /// blank labels.
-    gap_prob: f64,
+    gap_prob: f32,
 }
 
 impl SearchPoint {
     /// The total probability of the labelling so far.
     ///
     /// This sums the probabilities of the paths with and without leading blank labels.
-    fn probability(&self) -> f64 {
+    fn probability(&self) -> f32 {
         self.label_prob + self.gap_prob
     }
 }
@@ -60,7 +60,7 @@ fn ctcdecoder(_py: Python<'_>, _m: &PyModule) -> PyResult<()> {
     #[pyo3(name = "beam_search")]
     fn beam_search<'py>(
         _py: Python<'py>,
-        probs: &PyArray2<f64>,
+        probs: &PyArray2<f32>,
         alphabet: &PyString,
         beam_size: usize,
     ) -> PyResult<(Vec<String>, Vec<Vec<usize>>)> {
