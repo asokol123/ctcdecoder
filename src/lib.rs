@@ -63,7 +63,7 @@ fn ctcdecoder(_py: Python<'_>, _m: &PyModule) -> PyResult<()> {
         probs: &PyArray2<f32>,
         alphabet: &PyString,
         beam_size: usize,
-    ) -> PyResult<(Vec<String>, Vec<Vec<usize>>)> {
+    ) -> PyResult<(Vec<String>, Vec<f32>)> {
         assert_eq!(
             probs.shape().len(),
             2,
@@ -75,7 +75,7 @@ fn ctcdecoder(_py: Python<'_>, _m: &PyModule) -> PyResult<()> {
 
             let probs = unsafe { probs.as_array() };
 
-            let bs: PyResult<(Vec<String>, Vec<Vec<usize>>)> = {
+            let bs: PyResult<(Vec<String>, Vec<f32>)> = {
                 let network_output = probs;
                 let beam_cut_threshold = 0.;
 
@@ -199,25 +199,23 @@ fn ctcdecoder(_py: Python<'_>, _m: &PyModule) -> PyResult<()> {
                     }
                 }
 
-                let mut paths = Vec::new();
+                let mut probas = Vec::new();
                 let mut sequences = Vec::new();
 
                 beam.drain(..).for_each(|beam| {
                     if beam.node != ROOT_NODE {
-                        let mut path = Vec::new();
+                        probas.push(beam.probability());
+
                         let mut sequence = String::new();
                         for (label, &time) in suffix_tree.iter_from(beam.node) {
-                            path.push(time);
                             sequence.push(alphabet.as_bytes()[label + 1] as char);
                         }
 
-                        path.reverse();
-                        paths.push(path);
                         sequences.push(sequence.chars().rev().collect::<String>());
                     }
                 });
 
-                Ok((sequences, paths))
+                Ok((sequences, probas))
             };
 
             bs
