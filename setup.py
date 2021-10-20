@@ -4,7 +4,7 @@ from setuptools_rust import RustExtension
 
 setup(
     name="setuptools-rust-starter",
-    version="0.2.1",
+    version="0.3.0",
     packages=["ctcdecoder"],
     install_requires=["numpy"],
     rust_extensions=[

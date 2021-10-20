@@ -191,6 +191,17 @@ impl<T> SuffixTree<T> {
             next: node,
         }
     }
+
+    pub fn get_path(&self, node: i32, alphabet: &str) -> String {
+        if node == ROOT_NODE {
+            return String::new();
+        }
+        let mut sequence = String::new();
+        for (label, _time) in self.iter_from(node) {
+            sequence.push(alphabet.as_bytes()[label + 1] as char);
+        }
+        sequence.chars().rev().collect()
+    }
 }
 
 #[cfg(test)]
